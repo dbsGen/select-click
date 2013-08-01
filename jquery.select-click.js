@@ -28,16 +28,26 @@
             that.prevX = e.pageX;
             that.prevY = e.pageY;
         };
-        var click = function(e) {
+        var click = function(event) {
             var tolerance = parseInt($element.attr(ToleranceAttr) || ops[ToleranceAttr]);
             tolerance = isNaN(tolerance) ? 2 : tolerance;
-            var dx = Math.abs(e.pageX - that.prevX);
-            var dy = Math.abs(e.pageY - that.prevY);
+            var dx = Math.abs(event.pageX - that.prevX);
+            var dy = Math.abs(event.pageY - that.prevY);
             if (dx < tolerance && dy < tolerance) {
-                eval_t($element.attr(ClickAttr) || ops[ClickAttr])
+                var click = $element.attr(ClickAttr) || ops[ClickAttr];
+                if (typeof click == 'string') {
+                    eval(click);
+                }else if (typeof click == 'function') {
+                    click();
+                }
             }
             else {
-                eval_t($element.attr(SelectAttr) || ops[SelectAttr])
+                var select = $element.attr(SelectAttr) || ops[SelectAttr];
+                if (typeof select == 'string') {
+                    eval(select);
+                }else if (typeof select == 'function') {
+                    select();
+                }
             }
         };
         $element.each(function(){
@@ -55,11 +65,4 @@
         var sc = element.data(SelectClickKey);
         if(!sc) new SelectClick(element, ops);
     };
-    var eval_t = function(string) {
-        if (typeof string == 'string') {
-            eval(string);
-        }else if (typeof string == 'function') {
-            string();
-        }
-    }
 })(jQuery);
